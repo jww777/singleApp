@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.forceclouds.ctms.dao.mapper.system.BaseUserMapper">
+    <select id="getList" resultType="java.util.HashMap">
+        SELECT ct.USER_NAME
+        FROM CT_BASE_USER ct
+                 LEFT JOIN CT_BASE_USER_ROLE cbur ON ct.ID = cbur.USER_ID
+    </select>
+    <select id="selectPageVo" resultType="java.util.HashMap">
+        SELECT ct.USER_NAME
+        FROM CT_BASE_USER ct
+                 LEFT JOIN CT_BASE_USER_ROLE cbur ON ct.ID = cbur.USER_ID
+    </select>
+</mapper>

@@ -1,0 +1,379 @@
+<%
+var jsPart = {
+%>
+<!--<script src="/js/jquery.easypiechart.min.js"></script>-->
+<% }; %>
+<%
+DIRECTIVE DYNAMIC;
+DIRECTIVE SAFE_OUTPUT_OPEN;
+var htmlPart = {
+%>
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="ibox float-e-margins" style="margin:0px;">
+            <div class="ibox-content">
+                <form class="form-horizontal m-t" id="commentForm">
+                    <div class="form-group">
+                        <label class="col-md-2 control-label input-not-null">账号：</label>
+                        <div class="col-md-3">
+                            <input type="text" id="userAccount" name="userAccount" class="form-control " value="${ctBaseUser.userAccount}">
+                        </div>
+                        <label class="col-md-2 control-label">HIS关联代码：</label>
+                        <div class="col-md-3">
+                            <input type="text" name="hisCode" id="hisCode" class="form-control "
+                                   value="${ctBaseUser.hisCode}">
+                        </div>
+                    </div>
+                    <%
+                    if (isEmpty(ctBaseUser.id)){
+                    %>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label input-not-null">密码：</label>
+                        <div class="col-md-3">
+                            <input type="password" id="userPassword" name="userPassword" class="form-control"
+                                   minlength="2"  required>
+                        </div>
+                    </div>
+                    <%
+                    }
+                    %>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label input-not-null">姓名：</label>
+                        <div class="col-md-3">
+                            <input id="id" name="id" type="hidden" value="${ctBaseUser.id}"><!--主键-->
+                            <input type="text" id="userName" name="userName" class="form-control "
+                                   value="${ctBaseUser.userName}">
+                        </div>
+                        <label class="col-md-2 control-label">性别：</label>
+                        <div class="col-md-3">
+                            <div class="radio radio-success radio-inline">
+                                <input type="radio" id="sex1" value="1" name="sex" ${decode(ctBaseUser.sex, "1",
+                                "checked","checked")}>
+                                <label for="sex1">男</label>
+                            </div>
+                            <div class="radio radio-success radio-inline">
+                                <input type="radio" id="sex2" value="2" name="sex" ${decode(ctBaseUser.sex, "2",
+                                "checked", "")}>
+                                <label for="sex2">女</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">民族：</label>
+                        <div class="col-md-3">
+                            <input type="text" id="nation" name="nation" class="form-control "
+                                   value="${ctBaseUser.nation}">
+                        </div>
+                        <label class="col-md-2 control-label">出生日期：</label>
+                        <div class="col-md-3">
+                            <input type="text" id="birthday" name="birthday" class="form-control "
+                                   value="${ctBaseUser.birthday,dateFormat='yyyy-MM-dd'}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">学历：</label>
+                        <div class="col-md-3">
+                            <select class="form-control" id="educationId" name="educationId">
+                                <option value="">请选择</option>
+                                <%for(education in ctCodesEducation){
+                                %>
+                                <option value="${education.code}" ${decode(ctBaseUser.educationId,
+                                        education.code,
+                                "selected","")}>${education.codeName}</option>
+                                <%}%>
+                            </select>
+                        </div>
+                        <label class="col-md-2 control-label">研究方向：</label>
+                        <div class="col-md-3">
+                            <input type="text" id="studyArea" name="studyArea" class="form-control "
+                                   value="${ctBaseUser.studyArea}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">职务：</label>
+                        <div class="col-md-3">
+                            <input type="text" id="duties" name="duties" class="form-control "
+                                   value="${ctBaseUser.duties}">
+                        </div>
+                        <label class="col-md-2 control-label">职称：</label>
+                        <div class="col-md-3">
+                            <input type="text" id="title" name="title" class="form-control "
+                                   value="${ctBaseUser.title}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">手机号码：</label>
+                        <div class="col-md-3">
+                            <input type="text" id="userMobile" name="userMobile" class="form-control "
+                                   value="${ctBaseUser.userMobile}">
+                        </div>
+                        <label class="col-md-2 control-label">办公电话：</label>
+                        <div class="col-md-3">
+                            <input type="text" id="officeTel" name="officeTel" class="form-control "
+                                   value="${ctBaseUser.officeTel}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">电子邮件：</label>
+                        <div class="col-md-3">
+                            <input type="text" name="userEmail" class="form-control "
+                                   value="${ctBaseUser.userEmail}">
+                        </div>
+                        <label class="col-md-2 control-label">传真：</label>
+                        <div class="col-md-3">
+                            <input type="text" name="fax" class="form-control " value="${ctBaseUser.fax}">
+                        </div>
+                    </div>
+                    <div class="form-group" >
+                        <label class="col-md-2 control-label">工作日期：</label>
+                        <div class="col-md-3">
+                            <input type="text" name="workingStart" id="workingStart" class="form-control "
+                                   value="${ctBaseUser.workingStart,dateFormat='yyyy-MM-dd'}">
+                        </div>
+                        <label class="col-md-2 control-label">GCP证书：</label>
+                        <div class="col-md-3" id="file-pretty">
+                            <input type="file" name="file" id="file" class="form-control " value="${ctBaseUser.gcpCertificate}">
+                        </div>
+                        <div>
+                            <div id="spinner" class="sk-spinner sk-spinner-wave" style="display: none;">
+                                <div class="sk-rect1"></div>
+                                <div class="sk-rect2"></div>
+                                <div class="sk-rect3"></div>
+                                <div class="sk-rect4"></div>
+                                <div class="sk-rect5"></div>
+                            </div>
+                            <a id="btnDown" target="_blank" onclick="fileDown(this);" class="btn btn-primary btn-sm" style="display: none;" type="button"><i
+                                    class="fa fa-cloud-download"></i>&nbsp;&nbsp;<span
+                                    class="bold">下载</span>
+                            </a>
+                            <input type="hidden" id="gcpCertificate" name="gcpCertificate" value="${ctBaseUser.gcpCertificate}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">办公地址：</label>
+                        <div class="col-md-8">
+                            <input type="text" name="officeAddress" class="form-control "
+                                   value="${ctBaseUser.officeAddress}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">备注：</label>
+                        <div class="col-md-8">
+                            <textarea id="backup" name="backup" class="form-control" style="min-height: 80px;">${ctBaseUser.backup}</textarea>
+                        </div>
+                    </div>
+                    <div class="form-group" style="display: none">
+                        <label class="col-md-2 control-label">有效：</label>
+                        <div class="col-md-3">
+                            <div class="switch" style="padding-top: 4px;">
+                                <div class="onoffswitch">
+                                    <input type="checkbox" checked="" class="onoffswitch-checkbox" id="userValid"
+                                           name="userValid" value="1" ${decode(ctBaseUser.userValid, 1, "checked","")}>
+                                    <label class="onoffswitch-label" for="userValid">
+                                        <span class="onoffswitch-inner"></span>
+                                        <span class="onoffswitch-switch"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-12 text-center">
+                            <button class="btn btn-primary" type="submit" onclick="btnSubmit();">保存内容</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 修改原因 -->
+<div id="divChangeReason" style="display: none">
+    <div class="form-group" style="padding-bottom: 0;padding-top: 15px;">
+        <div class="col-md-12">
+            <textarea id="changeReason" name="changeReason" style="height: 170px" class="form-control"></textarea>
+        </div>
+    </div>
+</div>
+<script>
+    var token = '';
+    var departmentId = sessionStorage.getItem("fc-ctms-departmentId");
+    $(document).ready(function () {
+        initPage();
+        var filePath = $("#gcpCertificate").val();
+        if  (filePath)
+        {
+            $("#btnDown").show();
+            $(".input-append input")[0].value = filePath.split('|')[0];
+        }
+        // TEXTAREA高度自适应
+        $.each($("textarea"), function(i, n){
+            autoTextarea($(n)[0]);
+        });
+    });
+    //初始化页面
+    function initPage() {
+        $.jgrid.defaults.styleUI = 'Bootstrap';
+        //resize重设(表格、树形)宽高
+        $(window).resize(function (e) {
+            //window.setTimeout(function () {
+            //临床试验
+            $("#grid_table").setGridHeight($(window).height() - 150);
+            //培训
+            $("#train_grid_table").setGridHeight($(window).height() - 150);
+            //}, 200);
+            e.stopPropagation();
+        });
+        $('#workingStart').datepicker({
+            startView: 0,
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            forceParse: false,
+            todayHighlight: false,
+            autoclose: true,
+            format: "yyyy-mm-dd"
+        });  $('#birthday').datepicker({
+            startView: 0,
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            forceParse: false,
+            todayHighlight: false,
+            autoclose: true,
+            format: "yyyy-mm-dd"
+        });
+        // 账号不允许修改
+        if ($("#userAccount").val()) {
+            $("#userAccount").attr("readonly", "readonly");
+        }
+    }
+    //提交
+    function btnSubmit() {
+        $("#commentForm").validate({
+            onsubmit: true,// 是否在提交是验证
+            onfocusout: false,// 是否在获取焦点时验证
+            onkeyup: false,// 是否在敲击键盘时验证
+            rules: {
+                userAccount:{
+                    required:true,
+                    minlength:2,
+                    maxlength:40
+                },
+                userPassword:{
+                    required:true,
+                    minlength:6,
+                    maxlength:8
+                },
+                userName:{
+                    required:true,
+                    minlength:2,
+                    maxlength:40
+                },
+                userEmail:{
+                    email:true,
+                    maxlength:100
+                },
+                officeTel: {
+                    isTel: true,
+                    maxlength:100
+                },
+                userMobile:{
+                    isMobile:true,
+                    maxlength:100
+                },
+                fax:{
+                    isTel: true,
+                    maxlength:100
+                },
+                duties:{
+                    maxlength:100
+                },
+                birthday:{
+                    isDate:true
+                },
+                nation:{
+                    maxlength:2
+                },
+                title:{
+                    maxlength:40
+                },
+                studyArea:{
+                    maxlength:40
+                },
+                workingStart:{
+                    isDate:true
+                },
+                officeAddress:{
+                    maxlength:40
+                },
+                backup:{
+                    maxlength:200
+                }
+            }, messages: {},
+            submitHandler: function (form) {  //通过之后回调
+                $(".btn").addClass('active').attr('disabled', 'disabled');
+                //修改，写入变更理由
+                if ($("#id").val() == "")
+                {
+                    //新增
+                    ajaxSubmit();
+                } else {
+                    //修改，写入变更理由
+                    dialogDivOpen({
+                        title: "变更原因",
+                        maxmin: false,
+                        width: '500px',
+                        height: "300px",
+                        content: $("#divChangeReason"),
+                        callBack: function (index, layero) {
+                            if ($("#changeReason").val() == "") {
+                                dialogMsg("请输入变更原因!", 0);
+                                return;
+                            }
+                            ajaxSubmit();
+                        }
+                    });
+                }
+                $(".btn").removeAttr("disabled");
+            },
+            invalidHandler: function (form, validator) {  //不通过回调
+                return false;
+            }
+        });
+    }
+
+    function ajaxSubmit() {
+        var postData = {
+            "ctBaseUser": $("#commentForm").serializeJSON(),
+            "departmentId": departmentId,
+            "token": token,
+            "changeReason":$("#changeReason").val()
+        }
+        $.ajax({
+            type: "post",
+            url: "/api/baseUser/saveForm",
+            contentType: "application/json;charset=utf-8",
+            data: JSON.stringify(postData),
+            dataType: "json",
+            success: function (result) {
+                if (result.status == 3) {
+                    dialogMsg(result.msg, 2);
+                    logout();
+                } else if (result.status == 0) {
+                    dialogMsg(result.msg, 0);
+                    return;
+                } else {
+                    dialogMsg(result.msg, 1);
+                    parent.location.reload();
+                }
+            }
+        });
+    }
+</script>
+</body>
+<%
+//关闭安全输出。
+DIRECTIVE SAFE_OUTPUT_CLOSE;
+};
+include("/templates/layout/layout.html",{jsSection:jsPart,bodySection:htmlPart}){}
+%>

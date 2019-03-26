@@ -1,0 +1,167 @@
+<%
+var jsPart = {
+%>
+<!--<script src="/js/jquery.easypiechart.min.js"></script>-->
+<% }; %>
+
+<%
+DIRECTIVE DYNAMIC;
+DIRECTIVE SAFE_OUTPUT_OPEN;
+var htmlPart = {
+%>
+<body class="gray-bg">
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="ibox iboxGrid">
+                    <div class="ibox-title">
+                        <form id="form" class="form-horizontal">
+                            <div class="row search-row">
+                                <div class="form-group col-sm-12 search-row-input search-row-label">
+                                    <label class="col-sm-1 control-label">名称：</label>
+                                    <div class="col-sm-2">
+                                        <input type="text" id="apiName" name="apiName"
+                                               class="form-control ">
+                                    </div>
+                                    <label class="col-sm-1 control-label">类别：</label>
+                                    <div class="col-sm-2">
+                                        <select class="form-control m-b " id="category" name="category" style="width: 100%">
+                                            <option value="">全部</option>
+                                            <option value="GET">GET</option>
+                                            <option value="SEND">SEND</option>
+                                        </select>
+                                    </div>
+                                    <label class="col-sm-1 control-label">状态：</label>
+                                    <div class="col-sm-2">
+                                        <select class="form-control m-b " id="status" name="status" style="width: 100%">
+                                            <option value="">全部</option>
+                                            <option value="1">成功</option>
+                                            <option value="0">失败</option>
+                                        </select>
+                                    </div>
+                                    <label class="col-sm-1 control-label">日期：</label>
+                                    <div class="col-sm-2 ">
+                                        <div class="input-daterange input-group date">
+                                            <input type="text" name="startTime" id="startTime"
+                                                   class="form-control "
+                                            >
+                                            <span class="input-group-addon">到</span>
+                                            <input type="text" name="endTime" id="endTime" class="form-control "
+                                            >
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row search-row">
+                                <div id="btnList" class="form-group col-sm-12 " style="margin-bottom: 0" align="right">
+                                    <div class="col-sm-10 control-label"></div>
+                                    <label class="col-sm-1 control-label" style="padding-right: 0px;">
+                                        <button id="btnSearch" name="btnSearch" class="btn btn-sm btn-primary"
+                                                style="width: 100%;"
+                                                type="button" onclick="getList();">查询
+                                        </button>
+                                    </label>
+                                    <label class="col-sm-1 control-label" style="padding-right: 0px;">
+                                        <button id="btnReset" name="btnReset" class="btn btn-sm btn-warning"
+                                                style="width: 100%"
+                                                type="button" onclick="reset();">重置
+                                        </button>
+                                    </label>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="jqGrid_wrapper">
+                            <table id="grid_table"></table>
+                            <div id="grid_page"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page-Level Scripts -->
+    <script>
+        var token = '';
+        $(document).ready(function () {
+            //验证token是否存在
+            token = sessionStorage.getItem("fc-ctms-token");
+            //token验证无效场合，返回login页面
+            var token_invalid = "${token_invalid!}";
+            if (token_invalid) {
+                layer.alert(token_invalid, function(){
+                    return logout();
+                });
+            }
+            initPage();
+            getGrid();
+
+            $('.dateCom').datepicker({
+                startView: 0,
+                todayBtn: "linked",
+                keyboardNavigation: false,
+                forceParse: false,
+                autoclose: true,
+                todayHighlight: true,
+                format: "yyyy-mm-dd"
+            });
+        });
+        //初始化页面
+        function initPage() {
+            $.jgrid.defaults.styleUI = 'Bootstrap';
+            //resize重设(表格、树形)宽高
+            $(window).on('load resize',function () {
+                $("#grid_table").setGridWidth($(window).width() - 100);
+                $("#grid_table").setGridHeight($(window).height() - 265);
+            });
+        }
+        //加载表格
+        function getGrid() {
+            $("#grid_table").jqGrid({
+                url: "/api/Ws/getHistoryList",
+                mtype: "get",
+                datatype: "json",
+                autowidth: true,
+                height: 'auto',
+                shrinkToFit: true,
+                rownumbers: true,
+                colModel: [
+                    {label: '接口名称', name: 'userName', index: 'userName', align: 'left',sortable: false},
+                    {label: '接口说明', name: 'apiDesc', index: 'apiDesc', align: 'left', sortable: false},
+                ],
+                pager: "#grid_page",
+                viewrecords: true,
+                hidegrid: false
+            });
+
+            // Add responsive to jqGrid
+            $(window).bind('resize', function () {
+                var width = $('.jqGrid_wrapper').width();
+                $('#grid_table').setGridWidth(width);
+            });
+            $("#btnSearch").click(function () {
+                // 清空元数据
+                $('#grid_table').jqGrid("clearGridData");
+                // 重新加载数据
+                $('#grid_table').jqGrid('setGridParam', {
+                    postData: {
+                        apiName: $("#apiName").val().trim(),
+                        category: $("#category").val().trim(),
+                        status: $("#status").val(),
+                        startTime: $("#startTime").val(),
+                        endTime: $("#endTime").val(),
+                        page: 1
+                    }
+                }).trigger("reloadGrid");
+            });
+        }
+    </script>
+</body>
+<%
+//关闭安全输出。
+DIRECTIVE SAFE_OUTPUT_CLOSE;
+};
+include("/templates/layout/layout.html",{jsSection:jsPart,bodySection:htmlPart}){}
+%>

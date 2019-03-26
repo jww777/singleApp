@@ -1,0 +1,181 @@
+<%
+var jsPart = {
+%>
+<!--<script src="/js/jquery.easypiechart.min.js"></script>-->
+<% }; %>
+
+<%
+var htmlPart = {
+%>
+<style>
+</style>
+<body class="gray-bg" style="display: flex; flex-direction: column; justify-content: center;align-items: center;">
+<div class="middle-box loginscreen animated fadeInDown">
+    <div class="round animated fadeInDown" style="display: flex;justify-content: center;align-items: center;">
+        <img class="loginImg" src="/assets/img/logo.png">
+    </div>
+    <div>
+        <div style="display: flex; align-items: center;">
+            <div class="loginTitle1">
+                中国医大一院CTMS
+            </div>
+            <div class="loginVersion" style="display: flex; justify-content: center; align-items: center;">
+                UAT环境
+            </div>
+        </div>
+        <div style="display: flex; justify-content: center; padding-top: 20px;">
+            <form class="m-t" role="form" method="post" autocomplete="off">
+                <div class="form-group loginText">
+                    账号
+                    <input type="text" id="username" class="form-control loginInput" name="user_name" required="" autocomplete="off"
+                           value="">
+                </div>
+                <div class="form-group loginText">
+                    密码
+                    <input type="password" id="password" class="form-control loginInput" name="pass_word" required="" autocomplete="off"
+                           value="">
+                </div>
+                <button type="submit" id="btnLogin" class="loginBtn">
+                    <span>登 录</span>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="loginRegiste">
+    <a href="/page/user/showRegister">
+        新项目注册
+    </a>
+</div>
+
+<div class="copy-right">
+    <div>
+        &copy; 2019 All Rights Reserved.
+    </div>
+</div>
+
+<script type="text/javascript">
+    //回车键
+    document.onkeydown = function (e) {
+        if (!e) e = window.event;
+        if ((e.keyCode || e.which) == 13) {
+            var btnLogin = document.getElementById("btnLogin");
+            btnLogin.click();
+        }
+    };
+    $(document).ready(function () {
+        $("form").validate({
+            onsubmit: true,// 是否在提交是验证
+            onfocusout: false,// 是否在获取焦点时验证
+            onkeyup: false,// 是否在敲击键盘时验证
+            rules: {}, messages: {},
+            submitHandler: function () {  //通过之后回调
+                checkLogin();
+            },
+            invalidHandler: function (form, validator) {  //不通过回调
+                return false;
+            }
+        });
+    });
+
+
+    //登陆方法
+    function checkLogin() {
+        $("#btnLogin").addClass('active').attr('disabled', 'disabled');
+        $("#btnLogin").find('span').text("校 验 中...");
+        var useraccount = $.trim($("#username").val());
+        var password = $.trim($("#password").val());
+        var postData = {
+            "userAccount": useraccount,
+            "userPassword": password
+        };
+        //提交登陆
+        $.ajax({
+            url: '/api/user/doLogin',
+            type: 'post',
+            data: JSON.stringify(postData),
+            dataType: 'json',
+            contentType: "application/json;charset=utf-8",
+            success: function (result) {
+                setTimeout(function () {
+                    $("#btnLogin").removeClass('active').removeAttr('disabled');
+                    $("#btnLogin").find('span').text("登 录");
+                    if (result.status == 0) {
+                        tipMessage(result.msg, 0);
+                        return;
+                    } else {
+                        //登陆成功
+                        sessionStorage.setItem("fc-ctms-token",result.extend.fcCtmsToken);
+                        sessionStorage.setItem("fc_ctms_userName",result.extend.ctBaseUser.userName);
+                        if (result.extend.ctBaseUserRoles.length == 1)
+                        {
+                            sessionStorage.setItem("fc-ctms-roleName",result.extend.ctBaseUserRoles[0].roleName);
+                            sessionStorage.setItem("fc-ctms-roleId",result.extend.ctBaseUserRoles[0].roleId);
+                            sessionStorage.setItem("fc-ctms-userRoleId",result.extend.ctBaseUserRoles[0].id);
+                            sessionStorage.setItem("fc-ctms-departmentId",result.extend.ctBaseUserRoles[0].departmentId);
+                            sessionStorage.setItem("fc-ctms-orgId",result.extend.ctBaseUserRoles[0].orgId);//机构ID
+                            window.location.href = '/page/user/doLogin?token=' + result.extend.fcCtmsToken+'&userRoleId=' + result.extend.ctBaseUserRoles[0].id;
+                            return false;
+                        }
+                        if (result.extend.ctBaseUserRoles.length > 1){
+                            var strTr ='';
+                            $.each(result.extend.ctBaseUserRoles,function (index,item) {
+                                if (item.departmentId == null)
+                                {
+                                    strTr += '<tr><td><i class="fa fa-circle text-navy"></i></td><td><a href="#" onclick="routeUrl(\''+item.roleName+'\',\''+item.roleId+'\',\'\',\''+item.orgId+'\',\''+item.id+'\');">'+item.roleName+'</a></td></tr>';
+                                }else {
+                                    strTr += '<tr><td><i class="fa fa-circle text-navy"></i></td><td><a href="#" onclick="routeUrl(\''+item.roleName+'\',\''+item.roleId+'\',\''+item.departmentId+'\',\''+item.orgId+'\',\''+item.id+'\');">'+item.roleName+"-"+item.extDepartmentName+'</a></td></tr>';
+                                }
+                            });
+                            var strHtml = '';
+                            strHtml += '<div id="roleList" class="ibox">';
+                            strHtml +='<div class="ibox-content">';
+                            strHtml +='<table id = "roleTable" class="table table-stripped small m-t-md">';
+                            strHtml +='<tbody>';
+                            strHtml += strTr;
+                            strHtml += '</tbody>';
+                            strHtml +='</table>';
+                            strHtml +='</div></div>';
+                            layer.open({
+                                type: 1,
+                                title: '选择角色',
+                                btn: ['确定'], //按钮
+                                move:'false',
+                                skin: 'layui-layer-rim', //加上边框
+                                area: ['400px', '400px'], //宽高
+                                content: strHtml
+                            });
+                        }else {
+                            tipMessage("此账号没有被分配角色，请联系相关人员添加。",0);
+                        }
+                    }
+                }, 1000);
+            },
+            error : function (result) {
+                console.log(result);
+            }
+        });
+    }
+    //跳转路径
+    function routeUrl(roleName,roleId,departmentId,orgId,userRoleId) {
+        sessionStorage.setItem("fc-ctms-roleName",roleName);
+        sessionStorage.setItem("fc-ctms-roleId",roleId);
+        sessionStorage.setItem("fc-ctms-userRoleId",userRoleId);
+        sessionStorage.setItem("fc-ctms-departmentId",departmentId);
+        sessionStorage.setItem("fc-ctms-orgId",orgId);//机构ID
+        /*update by lxw pi start*/
+        //window.location.href = '/page/user/doLogin?token=' + sessionStorage.getItem("fc-ctms-token");
+        window.location.href = '/page/user/doLogin?token=' + sessionStorage.getItem("fc-ctms-token")+'&roleId='+roleId+'&userRoleId='+userRoleId;
+        /*update by lxw pi end*/
+        return false;
+    }
+    //提示语
+    function tipMessage(content,type) {
+        top.layer.msg(content, { icon: type, time: 2000, shift: 5 });
+    }
+</script>
+</body>
+
+<% };
+include("/templates/layout/layout.html",{jsSection:jsPart,bodySection:htmlPart}){}
+%>
