@@ -6,7 +6,6 @@ import com.alibaba.fastjson.TypeReference;
 import com.forceclouds.ctms.admin.service.system.BaseUserService;
 import com.forceclouds.ctms.admin.vo.system.BaseUserVO;
 import com.forceclouds.ctms.common.dto.ResultMsg;
-import com.forceclouds.ctms.dao.entity.system.BaseUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,9 +36,7 @@ public class BaseUserApiController {
         String jsonCtBaseUser = jsonObject.getString("ctBaseUser");
         BaseUserVO baseUserVO = JSON.parseObject(jsonCtBaseUser, new TypeReference<BaseUserVO>() {});
 
-        BaseUser baseUser = baseUserVO.getBaseUser();
-        baseUser.setId("bbbbbbbbbb");
-        baseUserService.save(baseUser);
+        baseUserService.save(baseUserVO.getBaseUser());
         return null;
     }
 }

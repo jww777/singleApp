@@ -1,5 +1,5 @@
 server:
-  port: 8086
+  port: 8085
 spring:
   #格式化日期时间
   jackson:
@@ -41,6 +41,11 @@ mybatis-plus:
   config-location: classpath:mybatis/config/mybatis.cfg.xml # mybatis配置文件所在路径
   mapper-locations: classpath:mybatis/mapper/**/*.xml
   type-aliases-package: com.forceclouds.ctms.dao.entity
+  global-config:
+    db-config:
+      id-type: ID_WORKER_STR
+      logic-delete-value: 1 # 逻辑已删除值(默认为 1)
+      logic-not-delete-value: 0 # 逻辑未删除值(默认为 0)
 #自定义配置
 myconfig:
   #上传文件路径

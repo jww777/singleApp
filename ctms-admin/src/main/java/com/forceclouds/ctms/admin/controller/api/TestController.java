@@ -29,7 +29,7 @@ public class TestController {
     {
         baseUserService.removeById("b3b821c349054ccda1588e39046cc01c");
         BaseUser baseUser = baseUserService.getById("b3b821c349054ccda1588e39046cc01c");
-        IPage<HashMap<String, Object>> resultData = baseUserService.selectPageVo(new Page<>(page,rows),0);
+        IPage<HashMap<String, Object>> resultData = baseUserService.selectPageVo(new Page<HashMap<String, Object>>(page,rows),0);
         return ResultData.ResultDataByPage(resultData.getPages(),resultData.getTotal(),resultData.getCurrent(),resultData.getRecords());
     }
 }
